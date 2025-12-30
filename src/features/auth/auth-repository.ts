@@ -3,7 +3,7 @@ import { and, eq, isNull } from "drizzle-orm";
 import { db } from "@/db";
 import { roles, sessions, userRoles, users } from "@/db/schemas";
 
-import type { AuthRepository, AuthUser, UserForAuth } from "./auth-types";
+import type { AuthRepository, AuthUser, UserForAuth } from "./types";
 
 export class DrizzleAuthRepository implements AuthRepository {
   async findUserForAuth(email: string): Promise<UserForAuth | null> {

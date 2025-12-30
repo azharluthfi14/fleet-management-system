@@ -1,8 +1,8 @@
 import { verifyPassword } from "@/utils";
 
-import { InvalidCredentialsError, UserInactiveError } from "./auth-errors";
-import type { LoginFormInput } from "./auth-schema";
-import type { AuthRepository, AuthSession, AuthUser } from "./auth-types";
+import { InvalidCredentialsError, UserInactiveError } from "./errors";
+import type { LoginFormInput } from "./schema";
+import type { AuthRepository, AuthSession, AuthUser } from "./types";
 
 type AuthServiceDeps = {
   repo: AuthRepository;
