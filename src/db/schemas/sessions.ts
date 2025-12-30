@@ -14,7 +14,6 @@ export const sessions = pgTable(
     revokedAt: table.timestamp("revoked_at", { withTimezone: true }),
     userAgent: table.varchar("user_agent", { length: 255 }),
     ipAddress: table.varchar("ip_address", { length: 100 }),
-
     createdAt: table
       .timestamp("created_at", { withTimezone: true })
       .defaultNow()
