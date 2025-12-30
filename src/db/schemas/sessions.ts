@@ -23,5 +23,6 @@ export const sessions = pgTable(
   (table) => [
     index("sessions_user_id_idx").on(table.userId),
     index("sessions_expires_at_idx").on(table.expiresAt),
+    index("sessions_active_idx").on(table.expiresAt, table.revokedAt),
   ]
 );
