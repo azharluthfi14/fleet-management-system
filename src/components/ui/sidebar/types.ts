@@ -1,12 +1,12 @@
-import type { Role } from "@/constants";
 import type { AuthUser } from "@/features/auth/types";
+import type { Role } from "@/features/user";
 
 export interface SidebarMenu {
   id: string;
   label: string;
   href?: string;
   icon: React.ReactNode;
-  roles?: Role[];
+  roles?: readonly Role[];
   children?: SidebarMenu[];
   badge?: number;
 }

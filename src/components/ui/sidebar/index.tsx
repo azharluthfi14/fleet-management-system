@@ -12,6 +12,8 @@ import {
 import { ChevronsLeftRight, Truck } from "lucide-react";
 import { usePathname } from "next/navigation";
 
+import { hasRole } from "@/features/auth/guards";
+
 import { LogoutButton } from "./logout";
 import { SIDEBAR_MENUS } from "./menu";
 import { MenuItems } from "./menu-items";
@@ -24,7 +26,7 @@ export const Sidebar = ({ user }: SidebarProps) => {
   const userRoles = user?.roles;
   const menu = SIDEBAR_MENUS.filter((item) => {
     if (!item.roles) return true;
-    return item.roles.some((role) => userRoles.includes(role?.toLowerCase()));
+    return hasRole(userRoles, item.roles);
   });
 
   return (

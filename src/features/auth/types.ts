@@ -1,8 +1,10 @@
+import type { Role } from "../user";
+
 export interface AuthUser {
   id: string;
   email: string;
   name: string;
-  roles: string[];
+  roles: readonly Role[];
 }
 
 export type AuthSession = {
