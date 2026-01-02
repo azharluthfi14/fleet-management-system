@@ -37,3 +37,13 @@ export interface AuthRepository {
   revokeSession(sessionId: string): Promise<void>;
   getUserById(userId: string): Promise<AuthUser | null>;
 }
+
+export type LoginFormState =
+  | {
+      errors?: {
+        email?: string[];
+        password?: string[];
+      };
+      error?: string;
+    }
+  | undefined;

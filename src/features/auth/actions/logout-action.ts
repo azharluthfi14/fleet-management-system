@@ -13,11 +13,12 @@ const authService = new AuthService({
 });
 
 export async function logoutAction() {
-  const sessionId = (await cookies()).get("session_id")?.value;
+  const cookieStore = await cookies();
+  const sessionId = cookieStore.get("session_id")?.value;
 
   if (sessionId) {
     await authService.logout(sessionId);
   }
 
-  (await cookies()).delete("session_id");
+  cookieStore.delete("session_id");
 }
