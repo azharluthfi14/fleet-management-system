@@ -6,6 +6,15 @@ const PUBLIC_PATH = ["/login", "/register"];
 export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
+  if (
+    pathname.startsWith("/api") ||
+    pathname.startsWith("/_next") ||
+    pathname.startsWith("/static") ||
+    pathname.includes(".")
+  ) {
+    return NextResponse.next();
+  }
+
   if (PUBLIC_PATH.some((path) => pathname.startsWith(path))) {
     return NextResponse.next();
   }
@@ -15,15 +24,6 @@ export async function proxy(request: NextRequest) {
   if (!sessionId) {
     const loginUrl = new URL("/login", request.url);
     return NextResponse.redirect(loginUrl);
-  }
-
-  if (
-    pathname.startsWith("/api") ||
-    pathname.startsWith("/_next") ||
-    pathname.startsWith("/static") ||
-    pathname.includes(".")
-  ) {
-    return NextResponse.next();
   }
 }
 

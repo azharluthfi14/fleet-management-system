@@ -1,4 +1,11 @@
-import { LayoutDashboard, Truck, Users } from "lucide-react";
+import {
+  DollarSign,
+  LayoutDashboard,
+  MapPin,
+  Truck,
+  Users,
+  Wrench,
+} from "lucide-react";
 
 import { ROLES } from "@/constants";
 
@@ -9,14 +16,13 @@ export const SIDEBAR_MENUS: SidebarMenu[] = [
     id: "dashboard",
     label: "Dashboard",
     href: "/dashboard",
-    roles: [ROLES.ADMIN, ROLES.OPS],
     icon: <LayoutDashboard className="size-5" />,
   },
   {
     id: "vehicles",
     label: "Vehicles",
     href: "/vehicles",
-    roles: [ROLES.ADMIN, ROLES.OPS],
+    roles: [ROLES.admin, ROLES.manager],
     icon: <Truck className="size-5" />,
   },
   {
@@ -24,6 +30,27 @@ export const SIDEBAR_MENUS: SidebarMenu[] = [
     label: "Drivers",
     href: "/drivers",
     icon: <Users className="size-5" />,
-    roles: [ROLES.ADMIN, ROLES.OPS],
+    roles: [ROLES.admin],
+  },
+  {
+    id: "routes",
+    label: "Trips & Routes",
+    href: "/trips",
+    icon: <MapPin className="size-5" />,
+    roles: [ROLES.admin, ROLES.manager],
+  },
+  {
+    id: "maintenance",
+    label: "Maintenance",
+    href: "/maintenance",
+    icon: <Wrench className="size-5" />,
+    roles: [ROLES.admin, ROLES.manager],
+  },
+  {
+    id: "finance",
+    label: "Finance & Costs",
+    href: "/finance",
+    icon: <DollarSign className="size-5" />,
+    roles: [ROLES.admin, ROLES.manager],
   },
 ];

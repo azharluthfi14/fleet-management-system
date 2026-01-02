@@ -8,5 +8,5 @@ export async function verifyPassword(
 }
 
 export async function hashPassword(password: string) {
-  return bcrypt.hash(password, 10);
+  return bcrypt.hashSync(password, 10);
 }

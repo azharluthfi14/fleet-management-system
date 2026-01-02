@@ -6,7 +6,7 @@ import { db } from ".";
 import { roles, userRoles, users } from "./schemas";
 
 async function seedRoles() {
-  const roleNames = ["admin", "ops", "viewer"];
+  const roleNames = ["admin", "manager", "operator"];
 
   for (const name of roleNames) {
     const existing = await db

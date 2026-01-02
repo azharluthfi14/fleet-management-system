@@ -1,5 +1,6 @@
-import { redirect } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 
+import type { Role } from "../user";
 import { getAuthUser } from "./server";
 
 export async function requireAuth() {
@@ -16,9 +17,13 @@ export function requireRole(allowedRoles: string[]) {
     const hasRole = user.roles.some((r) => allowedRoles.includes(r));
 
     if (!hasRole) {
-      throw new Error("FORBIDDEN");
+      notFound();
     }
 
     return user;
   };
+}
+
+export function hasRole(userRoles: readonly Role[], allowed: readonly Role[]) {
+  return allowed.some((role) => userRoles.includes(role));
 }

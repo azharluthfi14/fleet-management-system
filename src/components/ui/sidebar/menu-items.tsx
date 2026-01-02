@@ -15,7 +15,7 @@ export const MenuItems = ({ isActive, item }: SidebarMenuItem) => {
       variant={isActive ? "solid" : "light"}
       className={cn(
         "flex w-full items-center shadow-none justify-start text-sm",
-        isActive ? "text-white" : "text-gray-600"
+        isActive ? "text-white" : "text-gray-500"
       )}
     >
       {item.icon}

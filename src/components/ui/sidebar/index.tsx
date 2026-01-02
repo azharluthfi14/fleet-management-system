@@ -19,6 +19,13 @@ import type { SidebarProps } from "./types";
 
 export const Sidebar = ({ user }: SidebarProps) => {
   const pathname = usePathname();
+  if (!user) return null;
+
+  const userRoles = user?.roles;
+  const menu = SIDEBAR_MENUS.filter((item) => {
+    if (!item.roles) return true;
+    return item.roles.some((role) => userRoles.includes(role?.toLowerCase()));
+  });
 
   return (
     <aside
@@ -35,7 +42,7 @@ export const Sidebar = ({ user }: SidebarProps) => {
         </span>
       </div>
       <nav className="flex-1 p-4 items-center justify-center space-y-2 overflow-y-auto py-4">
-        {SIDEBAR_MENUS?.map((menu) => (
+        {menu?.map((menu) => (
           <MenuItems
             key={menu.id}
             item={menu}
