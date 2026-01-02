@@ -1,8 +1,21 @@
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
 
+const PUBLIC_PATH = ["/login", "/register"];
+
 export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
+
+  if (PUBLIC_PATH.some((path) => pathname.startsWith(path))) {
+    return NextResponse.next();
+  }
+
+  const sessionId = request.cookies.get("session_id")?.value;
+
+  if (!sessionId) {
+    const loginUrl = new URL("/login", request.url);
+    return NextResponse.redirect(loginUrl);
+  }
 
   if (
     pathname.startsWith("/api") ||
