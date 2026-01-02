@@ -10,13 +10,11 @@ export async function requireAuth() {
   return user;
 }
 
-export function requireRole(allowedRoles: string[]) {
+export function requireRole(allowedRoles: readonly Role[]) {
   return async () => {
     const user = await requireAuth();
 
-    const hasRole = user.roles.some((r) => allowedRoles.includes(r));
-
-    if (!hasRole) {
+    if (!hasRole(user?.roles, allowedRoles)) {
       notFound();
     }
 
