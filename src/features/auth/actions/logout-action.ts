@@ -4,8 +4,8 @@ import { cookies } from "next/headers";
 
 import { env } from "@/config/env";
 
-import { DrizzleAuthRepository } from "../auth-repository";
-import { AuthService } from "../auth-service";
+import { DrizzleAuthRepository } from "../auth.repository";
+import { AuthService } from "../auth.service";
 
 const authService = new AuthService({
   repo: new DrizzleAuthRepository(),

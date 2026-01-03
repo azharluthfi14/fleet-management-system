@@ -1,9 +1,10 @@
 import { and, eq, isNull } from "drizzle-orm";
 
+import { type Role, ROLES } from "@/constants";
 import { db } from "@/db";
 import { roles, sessions, userRoles, users } from "@/db/schemas";
 
-import type { AuthRepository, AuthUser, UserForAuth } from "./types";
+import type { AuthRepository, AuthUser, UserForAuth } from "./auth.types";
 
 export class DrizzleAuthRepository implements AuthRepository {
   async findUserForAuth(email: string): Promise<UserForAuth | null> {
@@ -22,7 +23,7 @@ export class DrizzleAuthRepository implements AuthRepository {
     return result[0] ?? null;
   }
 
-  async getUserRoles(userId: string): Promise<string[]> {
+  async getUserRoles(userId: string): Promise<readonly Role[]> {
     const result = await db
       .select({
         name: roles.name,
@@ -31,7 +32,7 @@ export class DrizzleAuthRepository implements AuthRepository {
       .innerJoin(roles, eq(userRoles.roleId, roles.id))
       .where(eq(userRoles.userId, userId));
 
-    return result.map((r) => r.name);
+    return result.map((r) => r.name).filter(this.isRole);
   }
 
   async createSession(input: {
@@ -103,5 +104,9 @@ export class DrizzleAuthRepository implements AuthRepository {
       ...userResult[0],
       roles: rolesResult,
     };
+  }
+
+  private isRole(value: string): value is Role {
+    return ROLES.includes(value as Role);
   }
 }

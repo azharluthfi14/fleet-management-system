@@ -1,5 +1,4 @@
-export const ROLES = ["admin", "manager", "operator"] as const;
-export type Role = (typeof ROLES)[number];
+import type { Role } from "@/constants";
 
 export interface User {
   id: string;

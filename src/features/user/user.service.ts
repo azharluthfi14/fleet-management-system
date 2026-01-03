@@ -1,12 +1,6 @@
+import { type Role, ROLES } from "@/constants";
+import type { CreateUserInput, User, UserRepository } from "@/features/user";
 import { hashPassword } from "@/utils";
-
-import type { User } from "./types";
-import {
-  type CreateUserInput,
-  type Role,
-  ROLES,
-  type UserRepository,
-} from "./types";
 
 type UserServiceDeps = {
   repo: UserRepository;

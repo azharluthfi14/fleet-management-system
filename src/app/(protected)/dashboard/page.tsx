@@ -1,4 +1,4 @@
-import { requireAuth } from "@/features/auth/guards";
+import { requireAuth } from "@/features/auth/auth.guards";
 
 import { ListStat } from "./components";
 

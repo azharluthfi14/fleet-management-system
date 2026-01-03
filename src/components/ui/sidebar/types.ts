@@ -1,5 +1,5 @@
-import type { AuthUser } from "@/features/auth/types";
-import type { Role } from "@/features/user";
+import type { Role } from "@/constants";
+import type { AuthUser } from "@/features/auth/auth.types";
 
 export interface SidebarMenu {
   id: string;

@@ -2,7 +2,7 @@
 
 import { createContext, useContext } from "react";
 
-import type { AuthUser } from "./types";
+import type { AuthUser } from "./auth.types";
 
 const AuthContext = createContext<AuthUser | null>(null);
 

@@ -4,7 +4,7 @@ import { Button, cn, Input } from "@heroui/react";
 import { useActionState, useEffect } from "react";
 import { toast } from "sonner";
 
-import type { LoginFormState } from "@/features/auth/types";
+import type { LoginFormState } from "@/features/auth/auth.types";
 
 interface Props {
   action: (

@@ -2,15 +2,14 @@
 
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
-import { toast } from "sonner";
 
 import { env } from "@/config/env";
 
-import { DrizzleAuthRepository } from "../auth-repository";
-import { AuthService } from "../auth-service";
-import { InvalidCredentialsError, UserInactiveError } from "../errors";
-import { loginFormSchema } from "../schema";
-import type { LoginFormState } from "../types";
+import { InvalidCredentialsError, UserInactiveError } from "../auth.errors";
+import { DrizzleAuthRepository } from "../auth.repository";
+import { loginFormSchema } from "../auth.schema";
+import { AuthService } from "../auth.service";
+import type { LoginFormState } from "../auth.types";
 
 const authService = new AuthService({
   repo: new DrizzleAuthRepository(),

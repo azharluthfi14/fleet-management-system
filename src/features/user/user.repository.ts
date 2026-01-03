@@ -1,9 +1,9 @@
 import { eq, inArray } from "drizzle-orm";
 
+import type { Role } from "@/constants";
 import { db } from "@/db";
 import { roles, userRoles, users } from "@/db/schemas";
-
-import type { CreateUserInput, Role, User, UserRepository } from "./types";
+import type { CreateUserInput, User, UserRepository } from "@/features/user";
 
 export class DrizzleUserRepository implements UserRepository {
   private async getRoles(userId: string): Promise<Role[]> {

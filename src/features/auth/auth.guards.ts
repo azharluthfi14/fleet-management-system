@@ -1,7 +1,8 @@
 import { notFound, redirect } from "next/navigation";
 
-import type { Role } from "../user";
-import { getAuthUser } from "./server";
+import type { Role } from "@/constants";
+
+import { getAuthUser } from "./auth.server";
 
 export async function requireAuth() {
   const user = await getAuthUser();

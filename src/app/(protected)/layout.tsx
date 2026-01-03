@@ -3,8 +3,8 @@ import type { ReactNode } from "react";
 
 import { ContentWrapper } from "@/components/layout";
 import { Sidebar } from "@/components/ui";
-import { AuthProvider } from "@/features/auth/auth-provider";
-import { getAuthUser } from "@/features/auth/server";
+import { getAuthUser } from "@/features/auth";
+import { AuthProvider } from "@/features/auth/auth.provider";
 
 export default async function ProtectedLayout({
   children,

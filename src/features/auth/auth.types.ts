@@ -1,4 +1,4 @@
-import type { Role } from "../user";
+import type { Role } from "@/constants";
 
 export interface AuthUser {
   id: string;
@@ -23,7 +23,7 @@ export type UserForAuth = {
 
 export interface AuthRepository {
   findUserForAuth(email: string): Promise<UserForAuth | null>;
-  getUserRoles(userId: string): Promise<string[]>;
+  getUserRoles(userId: string): Promise<readonly Role[]>;
   createSession(input: {
     userId: string;
     expiresAt: Date;

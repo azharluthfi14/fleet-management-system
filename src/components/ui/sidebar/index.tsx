@@ -12,7 +12,7 @@ import {
 import { ChevronsLeftRight, Truck } from "lucide-react";
 import { usePathname } from "next/navigation";
 
-import { hasRole } from "@/features/auth/guards";
+import { hasRole } from "@/features/auth/auth.guards";
 
 import { LogoutButton } from "./logout";
 import { SIDEBAR_MENUS } from "./menu";
