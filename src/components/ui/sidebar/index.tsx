@@ -57,6 +57,7 @@ export const Sidebar = ({ user }: SidebarProps) => {
         <Dropdown radius="sm" placement="top" className="">
           <DropdownTrigger>
             <Button
+              suppressHydrationWarning={false}
               size="lg"
               radius="sm"
               variant="light"

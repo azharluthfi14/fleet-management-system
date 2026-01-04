@@ -1,0 +1,1 @@
+CREATE INDEX "vehicles_status_idx" ON "vehicles" USING btree ("status");

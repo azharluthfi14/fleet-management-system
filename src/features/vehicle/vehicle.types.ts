@@ -1,22 +1,39 @@
+export type VehicleStatus = "active" | "maintenance" | "inactive";
+
 export interface Vehicle {
   id: string;
   plateNumber: string;
   name: string;
   type: string;
-  capacity?: string | null;
-  isActive: boolean;
+  brand: string;
+  model: string;
+  year: number;
+  status: VehicleStatus;
+  odometer: number | null;
   createdAt: Date;
+  updatedAt: Date;
 }
 
 export type CreateVehicleInput = {
   plateNumber: string;
   name: string;
   type: string;
-  capacity?: string;
+  brand: string;
+  model: string;
+  year: number;
+  status?: VehicleStatus;
+  odometer?: number | null;
 };
 
-export type UpdateVehicleInput = Partial<CreateVehicleInput> & {
+export type UpdateVehicleInput = {
   id: string;
+  name?: string;
+  type?: string;
+  brand?: string;
+  model?: string;
+  year?: number;
+  status?: VehicleStatus;
+  odometer?: number;
 };
 
 export interface VehicleRepository {

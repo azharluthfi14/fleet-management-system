@@ -27,7 +27,16 @@ export class DrizzleVehicleRepository implements VehicleRepository {
   async create(input: CreateVehicleInput): Promise<{ id: string }> {
     const [row] = await db
       .insert(vehicles)
-      .values(input)
+      .values({
+        plateNumber: input.plateNumber,
+        name: input.name,
+        brand: input.brand,
+        model: input.model,
+        year: input.year,
+        type: input.type,
+        status: input.status ?? "active",
+        odometer: input.odometer,
+      })
       .returning({ id: vehicles.id });
 
     return row;
@@ -35,7 +44,6 @@ export class DrizzleVehicleRepository implements VehicleRepository {
 
   async update(input: UpdateVehicleInput): Promise<void> {
     const { id, ...data } = input;
-
     await db.update(vehicles).set(data).where(eq(vehicles.id, id));
   }
 

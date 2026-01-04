@@ -7,7 +7,7 @@ export const ContentWrapper = ({ children }: { children: ReactNode }) => {
   return (
     <main
       className={cn(
-        "min-h-screen bg-gray-50 pt-16 transition-all duration-300 md:pt-0",
+        "min-h-screen bg-slate-50 pt-16 transition-all duration-300 md:pt-0",
         "md:ml-64"
       )}
     >

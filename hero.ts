@@ -3,6 +3,10 @@ export default heroui({
   themes: {
     light: {
       colors: {
+        default: {
+          foreground: "#111827",
+          DEFAULT: "#FFFFFF",
+        },
         danger: {
           foreground: "#ffffff",
           DEFAULT: "#ef4444",
