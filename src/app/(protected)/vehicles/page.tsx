@@ -1,6 +1,7 @@
 import { requireAuth } from "@/features/auth";
 import {
   createVehicleAction,
+  deleteVehicle,
   editVehicleAction,
   getListVehicleAction,
 } from "@/features/vehicle/vehicle.action";
@@ -18,6 +19,7 @@ export default async function VehiclesPage() {
         userRoles={user.roles}
         vehicles={vehicles}
         action={editVehicleAction}
+        actionDelete={deleteVehicle}
       />
     </div>
   );

@@ -7,6 +7,7 @@ import {
   getCoreRowModel,
   useReactTable,
 } from "@tanstack/react-table";
+import { FileText } from "lucide-react";
 import { useMemo } from "react";
 
 type TableProps<T> = {
@@ -48,21 +49,35 @@ export function DataTable<T>({ data, columns, className }: TableProps<T>) {
           ))}
         </thead>
         <tbody>
-          {table.getRowModel().rows.map((row) => (
-            <tr
-              key={row.id}
-              className="border-t border-gray-200 hover:bg-gray-100 transition-colors"
-            >
-              {row.getVisibleCells().map((cell) => (
-                <td
-                  key={cell.id}
-                  className="py-2 px-6 text-xs text-gray-800 font-medium"
-                >
-                  {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                </td>
-              ))}
+          {table.getRowModel().rows.length === 0 ? (
+            <tr>
+              <td
+                colSpan={columns.length}
+                className="py-8 px-6  text-center text-sm"
+              >
+                <div className="w-full mb-2 flex items-center justify-center">
+                  <FileText className="size-8 text-gray-400" />
+                </div>
+                <p className="text-gray-400">No data available</p>
+              </td>
             </tr>
-          ))}
+          ) : (
+            table.getRowModel().rows.map((row) => (
+              <tr
+                key={row.id}
+                className="border-t border-gray-200 hover:bg-gray-100 transition-colors"
+              >
+                {row.getVisibleCells().map((cell) => (
+                  <td
+                    key={cell.id}
+                    className="py-2 px-6 text-xs text-gray-800 font-medium"
+                  >
+                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                  </td>
+                ))}
+              </tr>
+            ))
+          )}
         </tbody>
       </table>
     </div>

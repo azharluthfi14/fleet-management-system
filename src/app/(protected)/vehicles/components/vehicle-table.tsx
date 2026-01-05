@@ -20,12 +20,14 @@ interface VehicleTableProps {
   vehicles: Vehicle[];
   userRoles: readonly Role[];
   action: (_prevStat: unknown, formData: FormData) => Promise<any>;
+  actionDelete: (_prevStat: unknown, formData: FormData) => Promise<any>;
 }
 
 export const VehicleTable = ({
   userRoles,
   vehicles,
   action,
+  actionDelete,
 }: VehicleTableProps) => {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
@@ -110,6 +112,13 @@ export const VehicleTable = ({
     undefined
   );
 
+  const [
+    stateActionDelete,
+    formActionDelete,
+    pendingActionDelete,
+    resetActionDelete,
+  ] = useResettableActionState(actionDelete, undefined);
+
   useEffect(() => {
     if (state?.success) {
       toast.success("Vehicle edited");
@@ -130,6 +139,12 @@ export const VehicleTable = ({
     reset();
   };
 
+  useEffect(() => {
+    if (stateActionDelete?.success) {
+      toast.success("Vehicle deleted");
+    }
+  }, [stateActionDelete]);
+
   return (
     <>
       <Card shadow="none" className="border border-gray-200" radius="sm">
@@ -138,6 +153,7 @@ export const VehicleTable = ({
         </CardBody>
       </Card>
       <DetailVehicle
+        deleteAction={formActionDelete}
         isOpen={isOpen}
         onOpenChange={onOpenChange}
         vehicle={vehicle}

@@ -8,7 +8,13 @@ import {
   DrawerContent,
   DrawerFooter,
   DrawerHeader,
+  Modal,
+  ModalBody,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
 } from "@heroui/react";
+import { useRef, useState } from "react";
 
 import type { Vehicle } from "@/features/vehicle";
 
@@ -21,6 +27,7 @@ interface DetailVehicleProps {
   canEdit: boolean;
   canDelete: boolean;
   handleEdit: () => void;
+  deleteAction: (formData: FormData) => void | Promise<void>;
 }
 
 export const DetailVehicle = ({
@@ -30,10 +37,16 @@ export const DetailVehicle = ({
   canEdit,
   handleEdit,
   onOpenChange,
+  deleteAction,
 }: DetailVehicleProps) => {
+  const [openConfirm, setOpenConfirm] = useState(false);
+  const deleteFormRef = useRef<HTMLFormElement>(null);
   if (!vehicle) return null;
   return (
     <>
+      <form ref={deleteFormRef} action={deleteAction}>
+        <input type="hidden" name="id" value={vehicle.id} />
+      </form>
       <Drawer radius="sm" size="xl" isOpen={isOpen} onOpenChange={onOpenChange}>
         <DrawerContent>
           {(onClose) => (
@@ -43,6 +56,9 @@ export const DetailVehicle = ({
               </DrawerHeader>
               <DrawerBody>
                 <div className="space-y-4">
+                  <form action={deleteAction}>
+                    <input type="hidden" name="id" value={vehicle.id} />
+                  </form>
                   <div className="pt-2">
                     <h3 className="mb-3 text-base text-gray-900 font-semibold">
                       Basic Information
@@ -173,11 +189,14 @@ export const DetailVehicle = ({
                 )}
                 {canDelete && (
                   <Button
+                    onPress={() => {
+                      setOpenConfirm(true);
+                      onOpenChange?.();
+                    }}
                     fullWidth
                     radius="sm"
                     color="danger"
                     variant="flat"
-                    onPress={onClose}
                   >
                     Delete
                   </Button>
@@ -187,6 +206,32 @@ export const DetailVehicle = ({
           )}
         </DrawerContent>
       </Drawer>
+
+      {/* Confirm Modal */}
+      <Modal isOpen={openConfirm} onOpenChange={setOpenConfirm}>
+        <ModalContent>
+          {(onClose) => (
+            <>
+              <ModalHeader>Delete Vehicle</ModalHeader>
+              <ModalBody>Are you sure? This action cannot be undone.</ModalBody>
+              <ModalFooter>
+                <Button variant="light" onPress={onClose}>
+                  Cancel
+                </Button>
+                <Button
+                  color="danger"
+                  onPress={() => {
+                    deleteFormRef.current?.requestSubmit();
+                    onClose();
+                  }}
+                >
+                  Yes, Delete
+                </Button>
+              </ModalFooter>
+            </>
+          )}
+        </ModalContent>
+      </Modal>
     </>
   );
 };

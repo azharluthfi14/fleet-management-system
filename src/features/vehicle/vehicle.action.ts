@@ -78,3 +78,19 @@ export async function editVehicleAction(
 
   return { success: true };
 }
+
+export async function deleteVehicle(_prevState: unknown, formData: FormData) {
+  const user = await getAuthUser();
+
+  if (!user) throw new Error("UNAUTHENTICATED");
+
+  if (!canPerformVehicleAction(user.roles, "delete")) {
+    throw new Error("FORBIDDEN");
+  }
+  const id = formData.get("id") as string;
+  await vehicleService.delete(id, user.roles);
+
+  revalidatePath("/vehicles");
+
+  return { success: true };
+}
