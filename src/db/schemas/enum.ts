@@ -5,3 +5,14 @@ export const vehicleStatusEnum = pgEnum("vehicle_status", [
   "maintenance",
   "inactive",
 ]);
+
+export const driverStatusEnum = pgEnum("driver_status", [
+  "active",
+  "inactive",
+  "suspended",
+]);
+
+export const assignmentStatusEnum = pgEnum("assignment_status", [
+  "assigned",
+  "returned",
+]);
