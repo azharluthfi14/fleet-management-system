@@ -4,7 +4,7 @@ import {
   deleteVehicle,
   editVehicleAction,
   getListVehicleAction,
-} from "@/features/vehicle/vehicle.action";
+} from "@/features/vehicle";
 
 import { PanelHeaderTable, VehicleTable } from "./components";
 
