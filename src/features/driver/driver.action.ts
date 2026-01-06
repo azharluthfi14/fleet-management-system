@@ -1,5 +1,7 @@
 "use server";
 
+import { revalidatePath } from "next/cache";
+
 import { getAuthUser } from "../auth";
 import { canPerformDriverAction } from "./driver.policy";
 import { DrizzleDriverRepository } from "./driver.repository";
@@ -44,6 +46,10 @@ export async function createDriverAction(
   }
 
   await driverService.create(parsed.data, user.roles);
+
+  revalidatePath("/vehicles");
+
+  return { success: true };
 }
 
 export async function getDriverDetailActionById(driverId: string) {
@@ -65,7 +71,6 @@ export async function editDriverAction(
   formData: FormData
 ) {
   const user = await getAuthUser();
-
   if (!user) {
     throw new Error("UNAUTHENTICATED");
   }
@@ -87,6 +92,30 @@ export async function editDriverAction(
       errors: parsed.error.flatten().fieldErrors,
     };
   }
-
   await driverService.update(driverId, parsed.data, user.roles);
+
+  revalidatePath("/drivers");
+  return { success: true };
+}
+
+export async function deleteDriverAction(
+  _prevState: unknown,
+  formData: FormData
+) {
+  const user = await getAuthUser();
+  if (!user) {
+    throw new Error("UNAUTHENTICATED");
+  }
+
+  const driverId = formData.get("driverId") as string;
+
+  if (typeof driverId !== "string") {
+    throw new Error("INVALID_DRIVER_ID");
+  }
+
+  await driverService.delete(driverId, user.roles);
+
+  revalidatePath("/drivers");
+
+  return { success: true };
 }

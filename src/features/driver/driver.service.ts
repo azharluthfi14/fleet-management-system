@@ -67,4 +67,22 @@ export class DriverService {
         : undefined,
     });
   }
+
+  async delete(driverId: string, userRoles: readonly Role[]) {
+    if (!hasRole(userRoles, DRIVER_PERMISSIONS.delete)) {
+      throw new Error("FORBIDDEN");
+    }
+
+    const driver = await this.repo.findById(driverId);
+    if (!driverId || driver?.deletedAt) {
+      throw new Error("DRIVER_NOT_FOUND");
+    }
+
+    const isAssigned = await this.repo.isCurrentlyAssigned(driverId);
+    if (isAssigned) {
+      throw new Error("DRIVER_STILL_ASSIGNED");
+    }
+
+    return this.repo.softDelete(driverId);
+  }
 }

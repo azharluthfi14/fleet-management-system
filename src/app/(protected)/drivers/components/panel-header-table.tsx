@@ -9,6 +9,8 @@ import { toast } from "sonner";
 import type { Role } from "@/constants";
 import { useResettableActionState } from "@/hooks";
 
+import { FormModalDriver } from "./form-modal-driver";
+
 interface PanelHeaderTableProps {
   userRoles?: readonly Role[];
   action: (_prevState: unknown, formData: FormData) => Promise<any>;
@@ -67,7 +69,7 @@ export const PanelHeaderTable = ({ action }: PanelHeaderTableProps) => {
           </Button>
         </div>
       </div>
-      {/* <FormModalVehicle
+      <FormModalDriver
         key={openModalCreate ? "create-open" : "create-close"}
         mode="create"
         isOpen={openModalCreate}
@@ -75,7 +77,7 @@ export const PanelHeaderTable = ({ action }: PanelHeaderTableProps) => {
         action={formAction}
         isPending={pending}
         errors={openModalCreate ? state?.errors : null}
-      /> */}
+      />
     </>
   );
 };

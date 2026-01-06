@@ -23,6 +23,7 @@ export const drivers = pgTable(
       .timestamp("updated_at", { withTimezone: true })
       .defaultNow()
       .$onUpdate(() => new Date()),
+    deletedAt: table.timestamp("deleted_at", { withTimezone: true }),
   }),
   (table) => [
     uniqueIndex("drivers_license_number_idx").on(table.licenseNumber),

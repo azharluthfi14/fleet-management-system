@@ -16,5 +16,6 @@ export interface DriverRepository {
   findByLicenseNumber(licenseNumber: string): Promise<Driver | null>;
   create(input: InsertDriver): Promise<{ id: string }>;
   update(driverId: string, input: UpdateDriver): Promise<void>;
-  delete(driverId: string): Promise<void>;
+  softDelete(driverId: string): Promise<void>;
+  isCurrentlyAssigned(driverId: string): Promise<boolean>;
 }

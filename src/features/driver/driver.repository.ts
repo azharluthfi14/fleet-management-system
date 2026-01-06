@@ -1,7 +1,7 @@
-import { eq } from "drizzle-orm";
+import { and, eq, isNull } from "drizzle-orm";
 
 import { db } from "@/db";
-import { drivers } from "@/db/schemas";
+import { drivers, vehicleAssignments } from "@/db/schemas";
 
 import type {
   Driver,
@@ -12,14 +12,14 @@ import type {
 
 export class DrizzleDriverRepository implements DriverRepository {
   async findAll(): Promise<Driver[]> {
-    return db.select().from(drivers);
+    return db.select().from(drivers).where(isNull(drivers.deletedAt));
   }
 
   async findById(driverId: string): Promise<Driver | null> {
     const result = await db
       .select()
       .from(drivers)
-      .where(eq(drivers.id, driverId))
+      .where(and(eq(drivers.id, driverId), isNull(drivers.deletedAt)))
       .limit(1);
 
     return result[0] ?? null;
@@ -59,7 +59,29 @@ export class DrizzleDriverRepository implements DriverRepository {
       .returning();
   }
 
-  async delete(driverId: string): Promise<void> {
-    await db.delete(drivers).where(eq(drivers.id, driverId));
+  async softDelete(driverId: string): Promise<void> {
+    await db
+      .update(drivers)
+      .set({
+        status: "inactive",
+        deletedAt: new Date(),
+      })
+      .where(eq(drivers.id, driverId));
+  }
+
+  async isCurrentlyAssigned(driverId: string): Promise<boolean> {
+    const result = await db
+      .select({ id: vehicleAssignments.id })
+      .from(vehicleAssignments)
+      .where(
+        and(
+          eq(vehicleAssignments.driverId, driverId),
+          eq(vehicleAssignments.status, "assigned"),
+          isNull(vehicleAssignments.endAt)
+        )
+      )
+      .limit(1);
+
+    return result.length > 0;
   }
 }

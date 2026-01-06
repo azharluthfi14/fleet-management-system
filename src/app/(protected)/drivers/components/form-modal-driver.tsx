@@ -10,7 +10,7 @@ import {
   ModalHeader,
 } from "@heroui/react";
 
-import type { Vehicle } from "@/features/vehicle";
+import type { Driver } from "@/features/driver";
 
 type Mode = "edit" | "create";
 
@@ -18,20 +18,18 @@ interface FormModalDriverProps {
   mode: Mode;
   isOpen: boolean;
   onOpenChange: () => void;
-  initialData?: Partial<Vehicle> | null;
+  initialData?: Partial<Driver> | null;
   action: string | ((formData: FormData) => void | Promise<void>) | undefined;
   isPending: boolean;
   errors?: Record<string, string[]> | null;
 }
 
 const defaultValues = {
-  plateNumber: "",
-  name: "",
-  type: "",
-  brand: "",
-  model: "",
-  year: "",
-  odometer: "",
+  fullName: "",
+  phone: "",
+  licenseNumber: "",
+  licenseExpiry: "",
+  status: "",
 };
 
 export const FormModalDriver = ({
@@ -71,68 +69,41 @@ export const FormModalDriver = ({
                 </h3>
                 <div className="grid grid-cols-2 gap-4">
                   {!isCreate && (
-                    <Input value={values.id} name="id" type="hidden" />
+                    <Input value={values.id} name="driverId" type="hidden" />
                   )}
                   <Input
-                    name="plateNumber"
-                    label="Plate Number"
-                    placeholder="B 1234 XYZ"
-                    defaultValue={values.plateNumber}
-                    isReadOnly={!isCreate}
-                    isInvalid={!!errors?.plateNumber}
-                    errorMessage={errors?.plateNumber?.[0]}
+                    name="fullName"
+                    label="Fullname"
+                    placeholder="John doe"
+                    defaultValue={values.fullName}
+                    isInvalid={!!errors?.fullName}
+                    errorMessage={errors?.fullName?.[0]}
                   />
                   <Input
-                    name="name"
-                    label="Name"
-                    placeholder="Truck A"
-                    defaultValue={values.name}
-                    isInvalid={!!errors?.name}
-                    errorMessage={errors?.name?.[0]}
+                    name="phone"
+                    label="Phone number"
+                    placeholder="085XXXXXXXXXXX"
+                    defaultValue={values.phone ? values.phone : ""}
+                    isInvalid={!!errors?.phone}
+                    errorMessage={errors?.phone?.[0]}
                   />
                   <Input
-                    name="type"
-                    label="Type"
-                    placeholder="Type"
-                    defaultValue={values.type}
-                    isInvalid={!!errors?.type}
-                    errorMessage={errors?.type?.[0]}
+                    name="licenseNumber"
+                    label="License Number"
+                    placeholder="XXX-XXX"
+                    defaultValue={values.licenseNumber}
+                    isInvalid={!!errors?.licenseNumber}
+                    errorMessage={errors?.licenseNumber?.[0]}
                   />
                   <Input
-                    name="brand"
-                    label="Brand"
+                    name="licenseExpiry"
+                    label="License Expiry"
                     placeholder="Brand"
-                    defaultValue={values.brand}
-                    isInvalid={!!errors?.brand}
-                    errorMessage={errors?.brand?.[0]}
-                  />
-                  <Input
-                    name="model"
-                    label="Model"
-                    placeholder="Model"
-                    defaultValue={values.model}
-                    isInvalid={!!errors?.model}
-                    errorMessage={errors?.model?.[0]}
-                  />
-                  <Input
-                    name="year"
-                    type="text"
-                    label="Year"
-                    placeholder="Year"
-                    defaultValue={values.year ? String(values.year) : ""}
-                    isInvalid={!!errors?.year}
-                    errorMessage={errors?.year?.[0]}
-                  />
-                  <Input
-                    name="odometer"
-                    type="text"
-                    label="Odometer"
-                    placeholder="Odometer"
                     defaultValue={
-                      values.odometer ? String(values.odometer) : ""
+                      values.licenseExpiry ? values.licenseExpiry : ""
                     }
-                    isInvalid={!!errors?.odometer}
-                    errorMessage={errors?.odometer?.[0]}
+                    isInvalid={!!errors?.licenseExpiry}
+                    errorMessage={errors?.licenseExpiry?.[0]}
                   />
                 </div>
               </div>
