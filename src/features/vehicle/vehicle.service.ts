@@ -14,35 +14,39 @@ export class VehicleService {
     this.repo = deps.repo;
   }
 
-  list(userRoles: readonly Role[]) {
+  async list(userRoles: readonly Role[]) {
     if (!hasRole(userRoles, VEHICLE_PERMISSIONS.list)) {
       throw new Error("FORBIDDEN");
     }
     return this.repo.list();
   }
 
-  get(id: string, userRoles: readonly Role[]) {
+  async get(id: string, userRoles: readonly Role[]) {
     if (!hasRole(userRoles, VEHICLE_PERMISSIONS.view)) {
       throw new Error("FORBIDDEN");
     }
     return this.repo.findById(id);
   }
 
-  create(input: CreateVehicleInput, userRoles: readonly Role[]) {
+  async create(input: CreateVehicleInput, userRoles: readonly Role[]) {
     if (!hasRole(userRoles, VEHICLE_PERMISSIONS.create)) {
       throw new Error("FORBIDDEN");
     }
     return this.repo.create(input);
   }
 
-  update(input: UpdateVehicleInput, userRoles: readonly Role[]) {
+  async update(
+    vehicleId: string,
+    input: UpdateVehicleInput,
+    userRoles: readonly Role[]
+  ) {
     if (!hasRole(userRoles, VEHICLE_PERMISSIONS.update)) {
       throw new Error("FORBIDDEN");
     }
-    return this.repo.update(input);
+    return this.repo.update(vehicleId, input);
   }
 
-  delete(id: string, userRoles: readonly Role[]) {
+  async delete(id: string, userRoles: readonly Role[]) {
     if (!hasRole(userRoles, VEHICLE_PERMISSIONS.delete)) {
       throw new Error("FORBIDDEN");
     }

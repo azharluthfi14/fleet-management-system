@@ -65,6 +65,11 @@ export async function editVehicleAction(
     throw new Error("FORBIDDEN");
   }
 
+  const vehicleId = formData.get("vehicleId");
+  if (typeof vehicleId !== "string") {
+    throw new Error("INVALID_VEHICLE_ID");
+  }
+
   const raw = Object.fromEntries(formData.entries());
   const parsed = updateVehicleSchema.safeParse(raw);
 
@@ -72,7 +77,7 @@ export async function editVehicleAction(
     return { errors: parsed.error.flatten().fieldErrors };
   }
 
-  await vehicleService.update(parsed.data, user.roles);
+  await vehicleService.update(vehicleId, parsed.data, user.roles);
 
   revalidatePath("/vehicles");
 

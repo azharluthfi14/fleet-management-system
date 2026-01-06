@@ -1,4 +1,4 @@
-import { pgTable, uniqueIndex } from "drizzle-orm/pg-core";
+import { index, pgTable, uniqueIndex } from "drizzle-orm/pg-core";
 
 import { driverStatusEnum } from "./enum";
 import { users } from "./users";
@@ -24,5 +24,8 @@ export const drivers = pgTable(
       .defaultNow()
       .$onUpdate(() => new Date()),
   }),
-  (table) => [uniqueIndex("drivers_license_number_idx").on(table.licenseNumber)]
+  (table) => [
+    uniqueIndex("drivers_license_number_idx").on(table.licenseNumber),
+    index("drivers_status_idx").on(table.status),
+  ]
 );

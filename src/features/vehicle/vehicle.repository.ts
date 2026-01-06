@@ -42,9 +42,12 @@ export class DrizzleVehicleRepository implements VehicleRepository {
     return row;
   }
 
-  async update(input: UpdateVehicleInput): Promise<void> {
-    const { id, ...data } = input;
-    await db.update(vehicles).set(data).where(eq(vehicles.id, id));
+  async update(vehicleId: string, input: UpdateVehicleInput): Promise<void> {
+    await db
+      .update(vehicles)
+      .set(input)
+      .where(eq(vehicles.id, vehicleId))
+      .returning();
   }
 
   async delete(id: string): Promise<void> {

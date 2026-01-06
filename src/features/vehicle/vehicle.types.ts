@@ -40,7 +40,7 @@ export interface VehicleRepository {
   list(): Promise<Vehicle[]>;
   findById(id: string): Promise<Vehicle | null>;
   create(input: CreateVehicleInput): Promise<{ id: string }>;
-  update(input: UpdateVehicleInput): Promise<void>;
+  update(vehicleId: string, input: UpdateVehicleInput): Promise<void>;
   delete(id: string): Promise<void>;
 }
 
