@@ -1,11 +1,12 @@
 import { and, eq, isNull } from "drizzle-orm";
 
 import { db } from "@/db";
-import { drivers, vehicleAssignments } from "@/db/schemas";
+import { drivers, vehicleAssignments, vehicles } from "@/db/schemas";
 
 import type {
   Driver,
   DriverRepository,
+  DriverWithAssignment,
   InsertDriver,
   UpdateDriver,
 } from "./driver.types";
@@ -83,5 +84,51 @@ export class DrizzleDriverRepository implements DriverRepository {
       .limit(1);
 
     return result.length > 0;
+  }
+
+  async findByIdWithAssignments(
+    driverId: string
+  ): Promise<DriverWithAssignment | null> {
+    const result = await db
+      .select({
+        driver: drivers,
+        assignments: vehicleAssignments,
+        vehicle: vehicles,
+      })
+      .from(drivers)
+      .leftJoin(
+        vehicleAssignments,
+        and(
+          eq(vehicleAssignments.driverId, drivers.id),
+          eq(vehicleAssignments.status, "assigned")
+        )
+      )
+      .leftJoin(vehicles, eq(vehicles.id, vehicleAssignments.vehicleId))
+      .where(eq(drivers.id, driverId))
+      .limit(1);
+
+    const row = result[0];
+    if (!row) return null;
+
+    return {
+      id: row.driver.id,
+      fullName: row.driver.fullName,
+      phone: row.driver.phone,
+      licenseNumber: row.driver.licenseNumber,
+      licenseExpiry: row.driver.licenseExpiry,
+      status: row.driver.status,
+      deletedAt: row.driver.deletedAt,
+      assignment: row.assignments
+        ? {
+            id: row.assignments.id,
+            startAt: row.assignments.startAt,
+            vehicle: {
+              id: row.vehicle!.id,
+              plateNumber: row.vehicle!.plateNumber,
+              name: row.vehicle!.name,
+            },
+          }
+        : null,
+    };
   }
 }

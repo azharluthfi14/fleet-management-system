@@ -42,6 +42,7 @@ export interface VehicleRepository {
   create(input: CreateVehicleInput): Promise<{ id: string }>;
   update(vehicleId: string, input: UpdateVehicleInput): Promise<void>;
   delete(id: string): Promise<void>;
+  findAvailableVehicles(): Promise<Vehicle[]>;
 }
 
 export type VehicleServiceDeps = {

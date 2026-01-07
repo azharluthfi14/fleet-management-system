@@ -1,7 +1,7 @@
-import { eq } from "drizzle-orm";
+import { and, eq, isNull } from "drizzle-orm";
 
 import { db } from "@/db";
-import { vehicles } from "@/db/schemas";
+import { vehicleAssignments, vehicles } from "@/db/schemas";
 import type {
   CreateVehicleInput,
   UpdateVehicleInput,
@@ -52,5 +52,31 @@ export class DrizzleVehicleRepository implements VehicleRepository {
 
   async delete(id: string): Promise<void> {
     await db.delete(vehicles).where(eq(vehicles.id, id));
+  }
+
+  async findAvailableVehicles(): Promise<Vehicle[]> {
+    return await db
+      .select({
+        id: vehicles.id,
+        plateNumber: vehicles.plateNumber,
+        name: vehicles.name,
+        type: vehicles.type,
+        brand: vehicles.brand,
+        model: vehicles.model,
+        year: vehicles.year,
+        status: vehicles.status,
+        odometer: vehicles.odometer,
+        createdAt: vehicles.createdAt,
+        updatedAt: vehicles.updatedAt,
+      })
+      .from(vehicles)
+      .leftJoin(
+        vehicleAssignments,
+        and(
+          eq(vehicleAssignments.vehicleId, vehicles.id),
+          isNull(vehicleAssignments.endAt)
+        )
+      )
+      .where(isNull(vehicleAssignments.id));
   }
 }

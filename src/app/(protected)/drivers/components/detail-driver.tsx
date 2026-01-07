@@ -14,10 +14,13 @@ import {
   ModalContent,
   ModalFooter,
   ModalHeader,
+  Select,
+  SelectItem,
 } from "@heroui/react";
 import { useRef, useState } from "react";
 
-import type { Driver } from "@/features/driver";
+import type { Driver, DriverWithAssignment } from "@/features/driver";
+import type { Vehicle } from "@/features/vehicle";
 
 import { statusColor } from "../../vehicles/components/color";
 
@@ -29,6 +32,9 @@ interface DetailDriverProps {
   canDelete: boolean;
   handleEdit: () => void;
   deleteAction: (formData: FormData) => void | Promise<void>;
+  assignAction: (formData: FormData) => void | Promise<void>;
+  driverVehicle?: DriverWithAssignment;
+  availableVehicles?: Vehicle[];
 }
 
 export const DetailDriver = ({
@@ -36,13 +42,20 @@ export const DetailDriver = ({
   isOpen,
   canDelete,
   canEdit,
+  driverVehicle,
+  availableVehicles,
   handleEdit,
   onOpenChange,
+  assignAction,
   deleteAction,
 }: DetailDriverProps) => {
   const [openConfirm, setOpenConfirm] = useState(false);
+  const [openAssign, setOpenAssign] = useState(false);
+
   const deleteFormRef = useRef<HTMLFormElement>(null);
+
   if (!driver) return null;
+
   return (
     <>
       <form ref={deleteFormRef} action={deleteAction}>
@@ -125,42 +138,53 @@ export const DetailDriver = ({
                     <div className="grid grid-cols-2 gap-4">
                       <div>
                         <label className="block text-sm text-gray-600 font-medium">
-                          Current Mileage
-                        </label>
-                        <p className="text-gray-900 font-semibold">100 miles</p>
-                      </div>
-                      <div>
-                        <label className="block text-sm text-gray-600 font-medium">
                           Location
                         </label>
                         <p className="text-gray-900 font-semibold">Jakarta</p>
                       </div>
                       <div>
                         <label className="block text-sm text-gray-600 font-medium">
-                          Assigned Driver
+                          Assigned Vehicle
                         </label>
-                        <p className="text-gray-900 font-semibold">
-                          Unassigned
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="pt-4 border-t border-gray-200">
-                    <h3 className="text-gray-900 mb-3 text-base font-semibold">
-                      Maintenance Schedule
-                    </h3>
-                    <div className="grid grid-cols-2 gap-4">
-                      <div>
-                        <label className="block text-sm text-gray-600 font-medium">
-                          Last Service
-                        </label>
-                        <p className="text-gray-900 font-semibold">Januari</p>
-                      </div>
-                      <div>
-                        <label className="block text-sm text-gray-600 font-medium">
-                          Next Service
-                        </label>
-                        <p className="text-gray-900 font-semibold">Februari</p>
+                        {driverVehicle ? (
+                          <div className="flex items-center justify-between">
+                            <div>
+                              <p className="text-gray-900 font-semibold">
+                                {driverVehicle.assignment?.vehicle.name}
+                              </p>
+                              <p className="text-xs text-gray-500">
+                                Since{" "}
+                                {driverVehicle.assignment?.startAt.toISOString()}
+                              </p>
+                            </div>
+
+                            {canEdit && (
+                              <Button
+                                size="sm"
+                                variant="flat"
+                                color="warning"
+                                onPress={() => ""}
+                              >
+                                Return
+                              </Button>
+                            )}
+                          </div>
+                        ) : (
+                          <>
+                            <p className="text-gray-500">Unassigned</p>
+
+                            {canEdit && driver.status === "active" && (
+                              <Button
+                                size="sm"
+                                color="primary"
+                                variant="flat"
+                                onPress={() => setOpenAssign(true)}
+                              >
+                                Assign Vehicle
+                              </Button>
+                            )}
+                          </>
+                        )}
                       </div>
                     </div>
                   </div>
@@ -221,6 +245,50 @@ export const DetailDriver = ({
                 </Button>
               </ModalFooter>
             </>
+          )}
+        </ModalContent>
+      </Modal>
+
+      <Modal isOpen={openAssign} onOpenChange={setOpenAssign}>
+        <ModalContent>
+          {(onClose) => (
+            <form action={assignAction}>
+              <ModalHeader>Assign Vehicle</ModalHeader>
+
+              <ModalBody className="space-y-4">
+                {availableVehicles === undefined ||
+                availableVehicles.length <= 0 ? (
+                  <p className="text-gray-500">
+                    No available vehicles to assign.
+                  </p>
+                ) : (
+                  <>
+                    <input type="hidden" name="driverId" value={driver.id} />
+                    <Select
+                      name="vehicleId"
+                      label="Select Vehicle"
+                      placeholder="Choose available vehicle"
+                      isRequired
+                    >
+                      {availableVehicles.map((vehicle) => (
+                        <SelectItem key={vehicle.id}>
+                          {vehicle.plateNumber} — {vehicle.model}
+                        </SelectItem>
+                      ))}
+                    </Select>
+                  </>
+                )}
+              </ModalBody>
+
+              <ModalFooter>
+                <Button variant="light" onPress={onClose}>
+                  Cancel
+                </Button>
+                <Button color="primary" type="submit">
+                  Assign
+                </Button>
+              </ModalFooter>
+            </form>
           )}
         </ModalContent>
       </Modal>

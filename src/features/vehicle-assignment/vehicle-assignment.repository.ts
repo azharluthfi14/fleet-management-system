@@ -33,6 +33,7 @@ export class DrizzleVehicleAssignmentRepository implements VehicleAssignmentRepo
       .where(
         and(
           eq(vehicleAssignments.driverId, driverId),
+          eq(vehicleAssignments.status, "assigned"),
           isNull(vehicleAssignments.endAt)
         )
       )
@@ -61,7 +62,12 @@ export class DrizzleVehicleAssignmentRepository implements VehicleAssignmentRepo
   async create(input: InsertVehicleAssignment): Promise<{ id: string }> {
     const [row] = await db
       .insert(vehicleAssignments)
-      .values(input)
+      .values({
+        driverId: input.driverId,
+        vehicleId: input.vehicleId,
+        status: "assigned",
+        startAt: new Date(),
+      })
       .returning({ id: vehicleAssignments.id });
     return row;
   }

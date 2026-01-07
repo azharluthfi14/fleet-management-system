@@ -99,3 +99,11 @@ export async function deleteVehicle(_prevState: unknown, formData: FormData) {
 
   return { success: true };
 }
+
+export async function getListAvailableVehicle() {
+  const user = await getAuthUser();
+
+  if (!user) throw new Error("UNNAUTHENTICATED");
+
+  return vehicleService.listAvaliable(user.roles);
+}

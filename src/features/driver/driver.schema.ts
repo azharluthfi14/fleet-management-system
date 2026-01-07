@@ -10,7 +10,15 @@ export const createDriverSchema = z.object({
   status: driverStatusSchema.optional(),
 });
 
+export const assignVehicleSchema = z.object({
+  vehicleId: z.uuid(),
+  driverId: z.uuid(),
+  startAt: z.coerce.date().optional(),
+});
+
 export const updateDriverSchema = createDriverSchema.partial();
 
 export type CreateDriverSchemaInput = z.infer<typeof createDriverSchema>;
 export type UpdateDriverSchemaInput = z.infer<typeof updateDriverSchema>;
+export type DriverStatus = z.infer<typeof driverStatusSchema>;
+export type AssignVehicleSchemaInput = z.infer<typeof assignVehicleSchema>;

@@ -11,6 +11,7 @@ import { statusColor } from "@/app/(protected)/vehicles/components/color";
 import { DataTable } from "@/components/ui";
 import type { Role } from "@/constants";
 import type { Driver } from "@/features/driver";
+import type { Vehicle } from "@/features/vehicle";
 import { useResettableActionState } from "@/hooks";
 
 import { DetailDriver } from "./detail-driver";
@@ -18,16 +19,20 @@ import { FormModalDriver } from "./form-modal-driver";
 
 interface DriverTableProps {
   drivers: Driver[];
+  availabelVehicles: Vehicle[];
   userRoles: readonly Role[];
   actionEdit: (_prevStat: unknown, formData: FormData) => Promise<any>;
   actionDelete: (_prevStat: unknown, formData: FormData) => Promise<any>;
+  actionAssign: (_prevStat: unknown, formData: FormData) => Promise<any>;
 }
 
 export const DriverTable = ({
   userRoles,
   drivers,
+  availabelVehicles,
   actionEdit,
   actionDelete,
+  actionAssign,
 }: DriverTableProps) => {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
@@ -105,6 +110,11 @@ export const DriverTable = ({
     undefined
   );
 
+  const [stateAssignAction, formActionAssign] = useResettableActionState(
+    actionAssign,
+    undefined
+  );
+
   const [
     stateActionDelete,
     formActionDelete,
@@ -152,7 +162,9 @@ export const DriverTable = ({
         driver={driver}
         canDelete={canDelete}
         canEdit={canEdit}
+        availableVehicles={availabelVehicles}
         handleEdit={() => setOpenModalEdit(!openModalEdit)}
+        assignAction={formActionAssign}
       />
 
       <FormModalDriver

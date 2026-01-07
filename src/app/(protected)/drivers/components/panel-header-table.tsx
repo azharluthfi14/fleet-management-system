@@ -47,7 +47,10 @@ export const PanelHeaderTable = ({ action }: PanelHeaderTableProps) => {
   return (
     <>
       <div className="flex justify-between items-center">
-        <h1 className="text-xl font-semibold">Driver</h1>
+        <div>
+          <h1 className="text-xl font-semibold">Driver Managements</h1>
+          <p>Manage driver profiles and assignments</p>
+        </div>
         <div className="flex items-center gap-x-2">
           <Button
             size="sm"

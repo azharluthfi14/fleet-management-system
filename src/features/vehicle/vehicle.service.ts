@@ -52,4 +52,12 @@ export class VehicleService {
     }
     return this.repo.delete(id);
   }
+
+  async listAvaliable(userRoles: readonly Role[]) {
+    if (!hasRole(userRoles, VEHICLE_PERMISSIONS.list)) {
+      throw new Error("FORBIDDEN");
+    }
+
+    return this.repo.findAvailableVehicles();
+  }
 }

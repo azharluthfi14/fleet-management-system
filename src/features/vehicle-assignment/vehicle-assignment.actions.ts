@@ -37,4 +37,6 @@ export async function returnAssignment(assignmentId: string) {
   if (!user) throw new Error("UNAUTHENTICATED");
 
   await vehicleAssignmentService.returnAssignment(assignmentId, user.roles);
+
+  return { success: true };
 }
