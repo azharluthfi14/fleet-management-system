@@ -1,4 +1,4 @@
-import { useActionState, useTransition } from "react";
+import { useActionState, useCallback, useTransition } from "react";
 
 export function useResettableActionState<State, Payload>(
   action: (state: Awaited<State>, payload: Payload) => State | Promise<State>,
@@ -6,7 +6,7 @@ export function useResettableActionState<State, Payload>(
   permalink?: string
 ): [
   state: Awaited<State>,
-  dispatch: (payload: Payload | null) => void,
+  dispatch: (payload: Payload) => void,
   isPending: boolean,
   reset: () => void,
 ] {
@@ -14,23 +14,38 @@ export function useResettableActionState<State, Payload>(
 
   const [state, submit, isActionPending] = useActionState(
     async (state: Awaited<State>, payload: Payload | null) => {
-      if (!payload) {
+      if (payload === null) {
         return initialState;
       }
-      const data = await action(state, payload);
-      return data;
+
+      try {
+        const data = await action(state, payload);
+        return data;
+      } catch (error) {
+        console.log("Action error:", error);
+        return state;
+      }
     },
     initialState,
     permalink
   );
 
-  const reset = () => {
+  const dispatch = useCallback(
+    (payload: Payload) => {
+      startTransition(() => {
+        submit(payload);
+      });
+    },
+    [submit]
+  );
+
+  const reset = useCallback(() => {
     startTransition(() => {
       submit(null);
     });
-  };
+  }, [submit]);
 
   const combinedPending = isPending || isActionPending;
 
-  return [state, submit, combinedPending, reset];
+  return [state, dispatch, combinedPending, reset];
 }

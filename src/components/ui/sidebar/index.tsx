@@ -63,7 +63,10 @@ export const Sidebar = ({ user }: SidebarProps) => {
               variant="light"
               className="flex px-2 justify-start w-full"
             >
-              <Avatar name={user.name} className="size-10" />
+              <Avatar
+                name={user.name}
+                className="size-10 bg-black text-white"
+              />
               <div className="flex flex-1 justify-between items-center">
                 <div className="space-y-0.5 text-start">
                   <div className="font-medium text-sm">{user.name}</div>

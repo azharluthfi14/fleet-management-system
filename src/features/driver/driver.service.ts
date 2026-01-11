@@ -6,7 +6,12 @@ import type {
   CreateDriverSchemaInput,
   UpdateDriverSchemaInput,
 } from "./driver.schema";
-import type { DriverRepository, DriverServiceDeps } from "./driver.types";
+import {
+  DriverErrorsCode,
+  type DriverRepository,
+  type DriverServiceDeps,
+} from "./driver.types";
+import { DriverError } from "./driver-errors";
 
 export class DriverService {
   private readonly repo: DriverRepository;
@@ -17,7 +22,7 @@ export class DriverService {
 
   async list(userRoles: readonly Role[]) {
     if (!hasRole(userRoles, DRIVER_PERMISSIONS.list)) {
-      throw new Error("FORBIDDEN");
+      throw new DriverError(DriverErrorsCode.FORBIDDEN);
     }
 
     return this.repo.findAll();
@@ -25,7 +30,7 @@ export class DriverService {
 
   async getById(id: string, userRoles: readonly Role[]) {
     if (!hasRole(userRoles, DRIVER_PERMISSIONS.view)) {
-      throw new Error("FORBIDDEN");
+      throw new DriverError(DriverErrorsCode.FORBIDDEN);
     }
 
     return this.repo.findById(id);
@@ -33,7 +38,7 @@ export class DriverService {
 
   async getByLicense(licenseNumber: string, userRoles: readonly Role[]) {
     if (!hasRole(userRoles, DRIVER_PERMISSIONS.view)) {
-      throw new Error("FORBIDDEN");
+      throw new DriverError(DriverErrorsCode.FORBIDDEN);
     }
 
     return this.repo.findByLicenseNumber(licenseNumber);
@@ -41,7 +46,7 @@ export class DriverService {
 
   async create(input: CreateDriverSchemaInput, userRoles: readonly Role[]) {
     if (!hasRole(userRoles, DRIVER_PERMISSIONS.create)) {
-      throw new Error("FORBIDDEN");
+      throw new DriverError(DriverErrorsCode.FORBIDDEN);
     }
     return this.repo.create({
       ...input,
@@ -57,7 +62,7 @@ export class DriverService {
     userRoles: readonly Role[]
   ) {
     if (!hasRole(userRoles, DRIVER_PERMISSIONS.update)) {
-      throw new Error("FORBIDDEN");
+      throw new DriverError(DriverErrorsCode.FORBIDDEN);
     }
 
     return this.repo.update(driverId, {
@@ -70,17 +75,17 @@ export class DriverService {
 
   async delete(driverId: string, userRoles: readonly Role[]) {
     if (!hasRole(userRoles, DRIVER_PERMISSIONS.delete)) {
-      throw new Error("FORBIDDEN");
+      throw new DriverError(DriverErrorsCode.FORBIDDEN);
     }
 
     const driver = await this.repo.findById(driverId);
     if (!driverId || driver?.deletedAt) {
-      throw new Error("DRIVER_NOT_FOUND");
+      throw new DriverError(DriverErrorsCode.NOT_FOUND);
     }
 
     const isAssigned = await this.repo.isCurrentlyAssigned(driverId);
     if (isAssigned) {
-      throw new Error("DRIVER_STILL_ASSIGNED");
+      throw new DriverError(DriverErrorsCode.STILL_ASSIGNED);
     }
 
     return this.repo.softDelete(driverId);
@@ -88,13 +93,13 @@ export class DriverService {
 
   async getDetail(driverId: string, userRoles: readonly Role[]) {
     if (!hasRole(userRoles, DRIVER_PERMISSIONS.view)) {
-      throw new Error("FORBIDDEN");
+      throw new DriverError(DriverErrorsCode.FORBIDDEN);
     }
 
     const driver = await this.repo.findByIdWithAssignments(driverId);
 
     if (!driver || driver.deletedAt) {
-      throw new Error("DRIVER_NOT_FOUND");
+      throw new DriverError(DriverErrorsCode.NOT_FOUND);
     }
 
     return driver;

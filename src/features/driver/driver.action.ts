@@ -36,18 +36,29 @@ export async function createDriverAction(
     throw new Error("FORBIDDEN");
   }
 
-  const raw = Object.fromEntries(formData.entries());
-  const parsed = createDriverSchema.safeParse(raw);
+  try {
+    const raw = Object.fromEntries(formData.entries());
+    const parsed = createDriverSchema.safeParse(raw);
+    if (!parsed.success) {
+      return {
+        errors: parsed.error.flatten().fieldErrors,
+      };
+    }
 
-  if (!parsed.success) {
-    return {
-      errors: parsed.error.flatten().fieldErrors,
-    };
+    await driverService.create(parsed.data, user.roles);
+
+    revalidatePath("/vehicles");
+  } catch (error) {
+    if (error instanceof Error) {
+      if (error.message === "DRIVER_LICENSE_ALREADY_EXISTS") {
+        return {
+          errors: {
+            licenseNumber: ["Driver license number already exists."],
+          },
+        };
+      }
+    }
   }
-
-  await driverService.create(parsed.data, user.roles);
-
-  revalidatePath("/vehicles");
 
   return { success: true };
 }
@@ -113,9 +124,28 @@ export async function deleteDriverAction(
     throw new Error("INVALID_DRIVER_ID");
   }
 
-  await driverService.delete(driverId, user.roles);
+  try {
+    await driverService.delete(driverId, user.roles);
+    revalidatePath("/drivers");
+    return { success: true };
+  } catch (error) {
+    if (error instanceof Error) {
+      if (error.message === "DRIVER_STILL_ASSIGNED") {
+        return {
+          errors: {
+            driverId: [
+              "Cannot delete driver who is still assigned to a vehicle.",
+            ],
+          },
+        };
+      }
+    }
+  }
+}
 
-  revalidatePath("/drivers");
+export async function getDriverDetailAction(driverId: string) {
+  const user = await getAuthUser();
+  if (!user) throw new Error("UNAUTHENTICATED");
 
-  return { success: true };
+  return driverService.getDetail(driverId, user.roles);
 }

@@ -17,22 +17,24 @@ import {
   Select,
   SelectItem,
 } from "@heroui/react";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import type { Driver, DriverWithAssignment } from "@/features/driver";
+import { getDriverDetailAction } from "@/features/driver/driver.action";
 import type { Vehicle } from "@/features/vehicle";
 
 import { statusColor } from "../../vehicles/components/color";
 
 interface DetailDriverProps {
-  driver: Driver | null;
+  driver: DriverWithAssignment | null;
   isOpen: boolean;
   onOpenChange: () => void;
   canEdit: boolean;
   canDelete: boolean;
   handleEdit: () => void;
-  deleteAction: (formData: FormData) => void | Promise<void>;
-  assignAction: (formData: FormData) => void | Promise<void>;
+  handleDelete: () => void;
+  deleteAction?: (formData: FormData) => void | Promise<void>;
+  assignAction?: (formData: FormData) => void | Promise<void>;
   driverVehicle?: DriverWithAssignment;
   availableVehicles?: Vehicle[];
 }
@@ -42,25 +44,19 @@ export const DetailDriver = ({
   isOpen,
   canDelete,
   canEdit,
-  driverVehicle,
   availableVehicles,
   handleEdit,
   onOpenChange,
+  handleDelete,
   assignAction,
   deleteAction,
 }: DetailDriverProps) => {
-  const [openConfirm, setOpenConfirm] = useState(false);
   const [openAssign, setOpenAssign] = useState(false);
-
-  const deleteFormRef = useRef<HTMLFormElement>(null);
 
   if (!driver) return null;
 
   return (
     <>
-      <form ref={deleteFormRef} action={deleteAction}>
-        <input type="hidden" name="driverId" value={driver.id} />
-      </form>
       <Drawer radius="sm" size="xl" isOpen={isOpen} onOpenChange={onOpenChange}>
         <DrawerContent>
           {(onClose) => (
@@ -133,57 +129,29 @@ export const DetailDriver = ({
                   </div>
                   <div className="pt-4 border-t border-gray-200">
                     <h3 className="text-gray-900 mb-3 text-base font-semibold">
-                      Operational Information
+                      Current Assignment
                     </h3>
-                    <div className="grid grid-cols-2 gap-4">
-                      <div>
-                        <label className="block text-sm text-gray-600 font-medium">
-                          Location
-                        </label>
-                        <p className="text-gray-900 font-semibold">Jakarta</p>
-                      </div>
+                    <div>
                       <div>
                         <label className="block text-sm text-gray-600 font-medium">
                           Assigned Vehicle
                         </label>
-                        {driverVehicle ? (
-                          <div className="flex items-center justify-between">
-                            <div>
-                              <p className="text-gray-900 font-semibold">
-                                {driverVehicle.assignment?.vehicle.name}
-                              </p>
-                              <p className="text-xs text-gray-500">
-                                Since{" "}
-                                {driverVehicle.assignment?.startAt.toISOString()}
-                              </p>
-                            </div>
-
-                            {canEdit && (
-                              <Button
-                                size="sm"
-                                variant="flat"
-                                color="warning"
-                                onPress={() => ""}
-                              >
-                                Return
-                              </Button>
-                            )}
-                          </div>
+                        {driver.assignment ? (
+                          <p>{driver.assignment.vehicle.name}</p>
                         ) : (
-                          <>
-                            <p className="text-gray-500">Unassigned</p>
-
-                            {canEdit && driver.status === "active" && (
-                              <Button
-                                size="sm"
-                                color="primary"
-                                variant="flat"
-                                onPress={() => setOpenAssign(true)}
-                              >
-                                Assign Vehicle
-                              </Button>
-                            )}
-                          </>
+                          <div className="space-y-2">
+                            <p className="text-gray-500">
+                              No vehicle currently assigned
+                            </p>
+                            <Button
+                              fullWidth
+                              color="primary"
+                              variant="bordered"
+                              onPress={() => setOpenAssign(true)}
+                            >
+                              Assign Vehicle
+                            </Button>
+                          </div>
                         )}
                       </div>
                     </div>
@@ -207,7 +175,7 @@ export const DetailDriver = ({
                 {canDelete && (
                   <Button
                     onPress={() => {
-                      setOpenConfirm(true);
+                      handleDelete();
                       onOpenChange?.();
                     }}
                     fullWidth
@@ -223,32 +191,6 @@ export const DetailDriver = ({
           )}
         </DrawerContent>
       </Drawer>
-
-      <Modal isOpen={openConfirm} onOpenChange={setOpenConfirm}>
-        <ModalContent>
-          {(onClose) => (
-            <>
-              <ModalHeader>Delete Driver</ModalHeader>
-              <ModalBody>Are you sure? This action cannot be undone.</ModalBody>
-              <ModalFooter>
-                <Button variant="light" onPress={onClose}>
-                  Cancel
-                </Button>
-                <Button
-                  color="danger"
-                  onPress={() => {
-                    deleteFormRef.current?.requestSubmit();
-                    onClose();
-                  }}
-                >
-                  Yes, Delete
-                </Button>
-              </ModalFooter>
-            </>
-          )}
-        </ModalContent>
-      </Modal>
-
       <Modal isOpen={openAssign} onOpenChange={setOpenAssign}>
         <ModalContent>
           {(onClose) => (
@@ -263,7 +205,7 @@ export const DetailDriver = ({
                   </p>
                 ) : (
                   <>
-                    <input type="hidden" name="driverId" value={driver.id} />
+                    <input type="hidden" name="driverId" value={driver?.id} />
                     <Select
                       name="vehicleId"
                       label="Select Vehicle"

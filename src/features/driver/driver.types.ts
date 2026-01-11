@@ -43,3 +43,9 @@ export interface DriverRepository {
     driverId: string
   ): Promise<DriverWithAssignment | null>;
 }
+
+export enum DriverErrorsCode {
+  NOT_FOUND = "DRIVER_NOT_FOUND",
+  STILL_ASSIGNED = "DRIVER_STILL_ASSIGNED",
+  FORBIDDEN = "DRIVER_FORBIDDEN",
+}
